@@ -15,13 +15,14 @@ public class Tests extends TestBase {
     @Test
     public void titleTest(){
         HomePage homePage = new HomePage(driver);
-        driver.get("http://skiutah.com");
+
         homePage.getTitle();
     }
 
     @Test(priority=1)
     public void storiesTest(){
         HomePage homePage = new HomePage(driver);
+
         homePage.clickStories();
     }
 

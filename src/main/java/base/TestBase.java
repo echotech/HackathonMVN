@@ -18,15 +18,13 @@ public class TestBase {
         System.setProperty("webdriver.gecko.driver", "C:\\\\geckodriver\\geckodriver.exe");
         FirefoxDriver driver = new FirefoxDriver();
         driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+        driver.navigate().to("http://skiutah.com");
     }
 
     @AfterTest
     public void tearDown() throws InterruptedException {
         Thread.sleep(1000);
-        driver.close();
+        //driver.close();
     }
 
-    public static FirefoxDriver getDriver(){
-        return driver;
-    }
 }

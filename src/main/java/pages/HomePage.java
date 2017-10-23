@@ -13,15 +13,16 @@ public class HomePage {
     public HomePage(FirefoxDriver driver){
         PageFactory.initElements(driver,this);
         this.driver=driver;
+
     }
 
-    @FindBy(id = "body")
+    @FindBy(className="body")
     WebElement pageBody;
 
-    @FindBy(id="title")
+    @FindBy(className="title")
     WebElement pageTitle;
 
-    @FindBy(linkText="Stories")
+    @FindBy(partialLinkText="Stories")
     WebElement storiesLink;
 
     public void clickStories(){
@@ -31,4 +32,6 @@ public class HomePage {
     public String getTitle(){
         return pageTitle.toString();
     }
+
+
 }
