@@ -15,8 +15,7 @@ public class Tests extends TestBase {
     @Test
     public void titleTest(){
         HomePage homePage = new HomePage(driver);
-
-        homePage.getTitle();
+        System.out.println(homePage.getTitle().toString());
     }
 
     @Test(priority=1)
