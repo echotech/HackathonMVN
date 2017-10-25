@@ -2,6 +2,7 @@ package base;
 
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -16,9 +17,10 @@ public class TestBase {
 
     @BeforeTest
     public void init() {
-        System.setProperty("webdriver.gecko.driver", "C:\\\\geckodriver\\geckodriver.exe");
-        driver = new FirefoxDriver();
-        driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
+        System.setProperty("webdriver.chrome.driver", "C:\\\\chromedriver\\chromedriver.exe");
+        driver = new ChromeDriver();
+        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         driver.navigate().to("http://skiutah.com");
     }
 

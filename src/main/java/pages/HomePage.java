@@ -1,5 +1,6 @@
 package pages;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -20,14 +21,22 @@ public class HomePage {
     @FindBy(xpath = "//div[@id='top_menu']/ul/li/a[text()]")
     List<WebElement> topNav;
 
-    @FindBy(xpath = "//div[@id='top_menu']/ul/li")
-    List<WebElement> subMenu;
-
     @FindBy(xpath = "//div[@id=\"top_menu\"]/ul/li[2]/a")
     WebElement resortsHover;
 
-    @FindBy(xpath = "//div[@id=\"top_menu\"]/ul/li[2]/ul/li[1]/ul")
+    @FindBy(xpath = "//div[@id=\"top_menu\"]/ul/li[2]/ul/li[1]/ul/li/a")
     List<WebElement> resortsList;
+
+    @FindBy(xpath = "//*[@id=\"content\"]/div/div[3]/div/div/div[3]/div[2]/p/a")
+    WebElement googleDirections;
+
+    @FindBy(xpath = "//*[@id=\"sb_ifc50\"]/input")
+    WebElement googleInput;
+
+    @FindBy(xpath = "//*[@id=\"directions-searchbox-0\"]/div/div")
+    WebElement googleSearchbox;
+
+
 
     public void clickTopNav(String nav) {
         for (WebElement we : topNav) {
@@ -45,7 +54,7 @@ public class HomePage {
     }
 
     public void getSubMenu() {
-        for (WebElement we : subMenu) {
+        for (WebElement we : topNav) {
             Actions builder = new Actions(driver);
             Actions hoverOver = builder.moveToElement(we);
             hoverOver.perform();
@@ -54,22 +63,23 @@ public class HomePage {
         }
     }
 
-    public String getDistance(String resort) {
+
+    public String resortDistance(String resort) {
         String result = "Something went wrong";
         Actions builder = new Actions(driver);
         Actions hoverOver = builder.moveToElement(resortsHover);
-        hoverOver.perform();
-        for (WebElement res : resortsList) {
 
-            if ((res.toString()).equalsIgnoreCase(resort)) {
+        for (WebElement res : resortsList) {
+            hoverOver.perform();
+            String resortText = res.getAttribute("text").trim();
+            if (resortText.equalsIgnoreCase(resort)) {
                 res.click();
-                result = res.toString();
-                return result;
+                new Actions(driver).keyDown(Keys.CONTROL).click(googleDirections).keyUp(Keys.CONTROL).build().perform();
+                MapsPage maps = new MapsPage(driver);
+                return maps.calcDistance();
             }
         }
-
         return result;
-
     }
 
 
