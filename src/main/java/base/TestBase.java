@@ -18,7 +18,7 @@ public class TestBase {
     public void init() {
         System.setProperty("webdriver.gecko.driver", "C:\\\\geckodriver\\geckodriver.exe");
         driver = new FirefoxDriver();
-        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
         driver.navigate().to("http://skiutah.com");
     }
 

@@ -16,15 +16,15 @@ public class Tests extends TestBase {
     @Test
     public void titleTest(){
         HomePage homePage = new HomePage(driver);
-        System.out.println(homePage.getTitle().toString());
+        System.out.println(homePage.getTitle());
         Assert.assertEquals("Ski Utah | Utah Ski Resorts, Lift Tickets, Ski Passes, Maps & More! - Ski Utah", driver.getTitle());
     }
 
     @Test(priority=1)
-    public void storiesTest(){
+    public void navTest(){
         HomePage homePage = new HomePage(driver);
-        homePage.clickStories();
-        System.out.println(driver.getTitle().toString());
+        homePage.clickTopNav("Stories");
+        System.out.println(driver.getTitle());
         Assert.assertEquals("Read About the Latest Happenings on the Slopes - Ski Utah", driver.getTitle());
     }
 

@@ -17,10 +17,10 @@ public class HomePage {
         this.driver = driver;
     }
 
-    @FindBy(xpath = "//div[@id='top_menu']/ul/li[3]/a")
-    WebElement storiesLink;
+    @FindBy(xpath = "//div[@id='top_menu']/ul/li/a[text()]")
+    List<WebElement> topNav;
 
-    @FindBy(xpath = "//div[@id='top_menu']/ul")
+    @FindBy(xpath = "//div[@id='top_menu']/ul/li")
     List<WebElement> subMenu;
 
     @FindBy(xpath = "//div[@id=\"top_menu\"]/ul/li[2]/a")
@@ -29,12 +29,19 @@ public class HomePage {
     @FindBy(xpath = "//div[@id=\"top_menu\"]/ul/li[2]/ul/li[1]/ul")
     List<WebElement> resortsList;
 
-    public void clickStories() {
-        storiesLink.click();
+    public void clickTopNav(String nav) {
+        for (WebElement we : topNav) {
+            //System.out.println(we.getAttribute("text"));
+            String linkText = we.getAttribute("text").trim();
+            if (linkText.equalsIgnoreCase(nav)) {
+                we.click();
+                break;
+            }
+        }
     }
 
     public String getTitle() {
-        return driver.getTitle().toString();
+        return driver.getTitle();
     }
 
     public void getSubMenu() {
