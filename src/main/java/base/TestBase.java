@@ -27,7 +27,13 @@ public class TestBase {
     @AfterTest
     public void tearDown() throws InterruptedException {
         Thread.sleep(1000);
-        driver.close();
+
+        //Close all tabs
+        for(String handle : driver.getWindowHandles()) {
+            driver.switchTo().window(handle);
+            driver.close();
+
+        }
     }
 
 }
