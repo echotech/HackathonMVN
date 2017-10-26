@@ -111,7 +111,7 @@ public class HomePage {
         return results;
     }
 
-    //Challenge 5: Crawl a page and go to every link on the page with no duplicates.
+    //Challenge 6: Crawl a page and go to every link on the page with no duplicates.
     public void crawlLinks(){
         ArrayList<String> links = new ArrayList();
         Set<String> temp = new HashSet<String>();
