@@ -7,6 +7,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -36,8 +37,21 @@ public class HomePage {
     @FindBy(xpath = "//*[@id=\"directions-searchbox-0\"]/div/div")
     WebElement googleSearchbox;
 
+    @FindBy(xpath = "//*[@id=\"main-nav\"]/div[1]/div/div[2]/a/span")
+    WebElement searchIcon;
 
+    @FindBy(xpath = "//*[@id=\"main-nav\"]/div[2]/div/form/input")
+    WebElement searchInput;
 
+    @FindBy(xpath = "//*[@id=\"content\"]/div/div[2]/div/div/h2/a")
+    List<WebElement> searchResults;
+
+    //Challenge 1: Returns the title of the current page
+    public String getTitle() {
+        return driver.getTitle();
+    }
+
+    //Challenge 2: Clicks a link in the top navigation of the page based on string passed in.
     public void clickTopNav(String nav) {
         for (WebElement we : topNav) {
             //System.out.println(we.getAttribute("text"));
@@ -49,10 +63,7 @@ public class HomePage {
         }
     }
 
-    public String getTitle() {
-        return driver.getTitle();
-    }
-
+    //Challenge 3: Hovers over each item in the top nav
     public void getSubMenu() {
         for (WebElement we : topNav) {
             Actions builder = new Actions(driver);
@@ -63,7 +74,7 @@ public class HomePage {
         }
     }
 
-
+    //Challenge 4: Will return the distance from Salt Lake International airport for the resort passed as a string
     public String resortDistance(String resort) {
         String result = "Something went wrong";
         Actions builder = new Actions(driver);
@@ -80,6 +91,20 @@ public class HomePage {
             }
         }
         return result;
+    }
+
+    //Challenge 5: Allows user to search 3 strings and returns the urls from the results in an ArrayList
+    public ArrayList<String> searchResults(String query, String resort, String subcategory){
+        ArrayList<String> results = new ArrayList();
+        searchIcon.click();
+        searchInput.sendKeys(query + " " + resort + " " + subcategory);
+        searchInput.sendKeys(Keys.RETURN);
+        for(WebElement e: searchResults){
+            results.add(e.getAttribute("href"));
+
+        }
+        //System.out.println(results.size());
+        return results;
     }
 
 

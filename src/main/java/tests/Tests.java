@@ -40,6 +40,13 @@ public class Tests extends TestBase {
 
     }
 
+    @Test(priority=4)
+    public void searchTest(){
+        HomePage homePage = new HomePage(driver);
+
+        assertEquals(16, homePage.searchResults("dining", "alta", "menu").size());
+    }
+
 
 
 }
