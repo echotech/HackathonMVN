@@ -47,6 +47,12 @@ public class Tests extends TestBase {
         assertEquals(16, homePage.searchResults("dining", "alta", "menu").size());
     }
 
+    @Test(priority=5)
+    public void crawlLinksTest(){
+        HomePage homePage = new HomePage(driver);
+        homePage.crawlLinks();
+    }
+
 
 
 }

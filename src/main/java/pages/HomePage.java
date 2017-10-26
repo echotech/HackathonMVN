@@ -7,12 +7,14 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 public class HomePage {
     private WebDriver driver;
+    private Set<String> crawledLinks = new HashSet<String>();
+    private List<String> alreadyVisited = new ArrayList<String>();
+
 
     public HomePage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -37,7 +39,7 @@ public class HomePage {
     @FindBy(xpath = "//*[@id=\"directions-searchbox-0\"]/div/div")
     WebElement googleSearchbox;
 
-    @FindBy(xpath = "//*[@id=\"main-nav\"]/div[1]/div/div[2]/a/span")
+    @FindBy(xpath = "//*[@id=\"main-nav\"]/div[1]/div/div[2]")
     WebElement searchIcon;
 
     @FindBy(xpath = "//*[@id=\"main-nav\"]/div[2]/div/form/input")
@@ -45,6 +47,9 @@ public class HomePage {
 
     @FindBy(xpath = "//*[@id=\"content\"]/div/div[2]/div/div/h2/a")
     List<WebElement> searchResults;
+
+    @FindBy(tagName = "a")
+    List<WebElement> pageLinks;
 
     //Challenge 1: Returns the title of the current page
     public String getTitle() {
@@ -70,7 +75,6 @@ public class HomePage {
             Actions hoverOver = builder.moveToElement(we);
             hoverOver.perform();
 
-            //TODO Add logic to click the one you want.
         }
     }
 
@@ -107,5 +111,27 @@ public class HomePage {
         return results;
     }
 
+    //Challenge 5: Crawl a page and go to every link on the page with no duplicates.
+    public void crawlLinks(){
+        ArrayList<String> links = new ArrayList();
+        Set<String> temp = new HashSet<String>();
+        for(WebElement e: pageLinks){
+            if (e.getAttribute("href").contains("skiutah.com")) {
+                links.add(e.getAttribute("href"));
+                temp.addAll(links);
+                links.clear();
+                links.addAll(temp);
+            }
+        }
+        crawledLinks.addAll(temp);
+        for (String link: crawledLinks){
+            if(!alreadyVisited.contains(link)){
+                alreadyVisited.add(link);
+                driver.get(link);
+                crawlLinks();
+            }
+
+        }
+    }
 
 }

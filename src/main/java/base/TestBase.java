@@ -20,7 +20,7 @@ public class TestBase {
         System.setProperty("webdriver.chrome.driver", "C:\\\\chromedriver\\chromedriver.exe");
         driver = new ChromeDriver();
         driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.navigate().to("http://skiutah.com");
     }
 
