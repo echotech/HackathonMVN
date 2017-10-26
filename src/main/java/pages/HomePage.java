@@ -1,18 +1,20 @@
 package pages;
 
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import java.net.*;
 import java.util.*;
 
 
 public class HomePage {
     private WebDriver driver;
-    private Set<String> crawledLinks = new HashSet<String>();
+    private List<String> crawlQueue = new LinkedList<String>();
     private List<String> alreadyVisited = new ArrayList<String>();
 
 
@@ -98,12 +100,12 @@ public class HomePage {
     }
 
     //Challenge 5: Allows user to search 3 strings and returns the urls from the results in an ArrayList
-    public ArrayList<String> searchResults(String query, String resort, String subcategory){
+    public ArrayList<String> searchResults(String query, String resort, String subcategory) {
         ArrayList<String> results = new ArrayList();
         searchIcon.click();
         searchInput.sendKeys(query + " " + resort + " " + subcategory);
         searchInput.sendKeys(Keys.RETURN);
-        for(WebElement e: searchResults){
+        for (WebElement e : searchResults) {
             results.add(e.getAttribute("href"));
 
         }
@@ -112,25 +114,38 @@ public class HomePage {
     }
 
     //Challenge 6: Crawl a page and go to every link on the page with no duplicates.
-    public void crawlLinks(){
-        ArrayList<String> links = new ArrayList();
-        Set<String> temp = new HashSet<String>();
-        for(WebElement e: pageLinks){
-            if (e.getAttribute("href").contains("skiutah.com")) {
-                links.add(e.getAttribute("href"));
-                temp.addAll(links);
-                links.clear();
-                links.addAll(temp);
+    public void crawlLinks() {
+        for (WebElement e : pageLinks) {
+            try {
+                //Create URI to compare links with
+                URI ski = new URI("http://www.skiutah.com");
+                //Creates URI from href tag
+                URI test = new URI(e.getAttribute("href"));
+
+                if (test.getHost().equals(ski.getHost())) {
+                    crawlQueue.add(test.toString());
+                }
+            } catch (URISyntaxException url) {
+                System.out.println("Malformed url " + e.getAttribute("href"));
+                continue;
+            } catch (NullPointerException npe) {
+                continue;
             }
         }
-        crawledLinks.addAll(temp);
-        for (String link: crawledLinks){
-            if(!alreadyVisited.contains(link)){
-                alreadyVisited.add(link);
-                driver.get(link);
-                crawlLinks();
+        for (String link : crawlQueue) {
+            if (!alreadyVisited.contains(link)) {
+                try {
+                    alreadyVisited.add(link);
+                    driver.get(link);
+                } catch (TimeoutException e) {
+                    try {
+                        crawlLinks();
+                    } catch (NullPointerException npe) {
+                        continue;
+                    }
+                }
             }
-
+            //System.out.println("Visited " + alreadyVisited.size() + " links!");
         }
     }
 
