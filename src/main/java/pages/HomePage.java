@@ -8,8 +8,19 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class HomePage {
@@ -32,7 +43,7 @@ public class HomePage {
     @FindBy(xpath = "//div[@id=\"top_menu\"]/ul/li[2]/ul/li[1]/ul/li/a")
     List<WebElement> resortsList;
 
-    @FindBy(xpath = "//*[@id=\"content\"]/div/div[3]/div/div/div[3]/div[2]/p/a")
+    @FindBy(xpath = "//a[contains(text(), 'Get Directions')]")
     WebElement googleDirections;
 
     @FindBy(xpath = "//*[@id=\"sb_ifc50\"]/input")
@@ -52,6 +63,9 @@ public class HomePage {
 
     @FindBy(tagName = "a")
     List<WebElement> pageLinks;
+
+    @FindBy(xpath = "//body")
+    List<WebElement> allText;
 
     //Challenge 1: Returns the title of the current page
     public String getTitle() {
@@ -114,7 +128,7 @@ public class HomePage {
     }
 
     //Challenge 6: Crawl a page and go to every link on the page with no duplicates.
-    public void crawlLinks() {
+    public void crawlLinks() throws Exception{
         for (WebElement e : pageLinks) {
             try {
                 //Create URI to compare links with
@@ -137,6 +151,7 @@ public class HomePage {
                 try {
                     alreadyVisited.add(link);
                     driver.get(link);
+                    getAllText();
                 } catch (TimeoutException e) {
                     try {
                         crawlLinks();
@@ -148,5 +163,56 @@ public class HomePage {
             //System.out.println("Visited " + alreadyVisited.size() + " links!");
         }
     }
+
+    //Challenge 7: Get all text on the site and count occurrences of each word.
+    public void getAllText() throws Exception {
+        ArrayList<String> textList = new ArrayList<String>();
+
+        //Adds all text to an ArrayList
+        for (WebElement e : allText) {
+            textList.add(e.getText());
+        }
+
+        //Outputs the ArrayList to a text file.
+        Path out = Paths.get("raw.txt");
+        Files.write(out, textList, Charset.defaultCharset());
+
+        //Split the contents into a new ArrayList
+        Scanner file = new Scanner(out);
+        ArrayList<String> words = new ArrayList<String>();
+        while (file.hasNext()) {
+            String next = file.next().toLowerCase();
+            next = next.replaceAll("[^a-zA-Z]", "");
+            if (!next.isEmpty()) {
+                words.add(next);
+                Collections.sort(words);
+            }
+        }
+
+        //Outputs the ArrayList to a text file.
+        Path sortedOut = Paths.get("sortedoutput.txt");
+        Files.write(sortedOut, words, Charset.defaultCharset());
+
+        //Takes text file and counts the number of times each word occurs.
+        Scanner counting = new Scanner(sortedOut);
+        Map<String, Integer> dictionary = new TreeMap<String, Integer>();
+        while (counting.hasNext()) {
+            String entry = counting.next();
+            if (!dictionary.containsKey(entry)) {
+                dictionary.put(entry, 0);
+            }
+            dictionary.put(entry, dictionary.get(entry) + 1);
+        }
+
+        ArrayList<String> countedList = new ArrayList<String>();
+        for (Map.Entry<String, Integer> entry : dictionary.entrySet()) {
+            String res = "'" + entry.getKey() + "'" + " occurs " + entry.getValue() + " times";
+            countedList.add(res);
+        }
+
+        Path dictFile = Paths.get("dictionary.txt");
+        Files.write(dictFile, countedList, Charset.defaultCharset());
+    }
+
 
 }

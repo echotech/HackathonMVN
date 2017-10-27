@@ -48,9 +48,15 @@ public class Tests extends TestBase {
     }
 
     @Test(priority=5)
-    public void crawlLinksTest(){
+    public void crawlLinksTest() throws Exception{
         HomePage homePage = new HomePage(driver);
         homePage.crawlLinks();
+    }
+
+    @Test(priority=6)
+    public void crawlTextTest() throws Exception{
+        HomePage homePage = new HomePage(driver);
+        homePage.getAllText();
     }
 
 
