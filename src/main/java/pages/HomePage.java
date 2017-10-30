@@ -20,12 +20,14 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class HomePage {
     private WebDriver driver;
-    private List<String> crawlQueue = new LinkedList<String>();
+    //private List<String> crawlQueue = new LinkedList<String>();
+    private LinkedBlockingQueue<String> crawlQueue = new LinkedBlockingQueue<String>();
     private List<String> alreadyVisited = new ArrayList<String>();
     private ArrayList<String> words = new ArrayList<String>();
     private ArrayList<String> textList = new ArrayList<String>();
