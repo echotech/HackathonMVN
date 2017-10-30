@@ -139,7 +139,7 @@ public class HomePage {
                 URI ski = new URI("http://www.skiutah.com");
                 //Creates URI from href tag
                 URI test = new URI(e.getAttribute("href"));
-
+                //Verifies the link is internal to skiutah.com
                 if (test.getHost().equals(ski.getHost())) {
                     crawlQueue.add(test.toString());
                 }
