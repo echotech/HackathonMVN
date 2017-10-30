@@ -27,6 +27,8 @@ public class HomePage {
     private WebDriver driver;
     private List<String> crawlQueue = new LinkedList<String>();
     private List<String> alreadyVisited = new ArrayList<String>();
+    private ArrayList<String> words = new ArrayList<String>();
+    private ArrayList<String> textList = new ArrayList<String>();
 
 
     public HomePage(WebDriver driver) {
@@ -155,6 +157,7 @@ public class HomePage {
                 } catch (TimeoutException e) {
                     try {
                         crawlLinks();
+
                     } catch (NullPointerException npe) {
                         continue;
                     }
@@ -162,24 +165,29 @@ public class HomePage {
             }
             //System.out.println("Visited " + alreadyVisited.size() + " links!");
         }
+        makeDictionary();
     }
 
     //Challenge 7: Get all text on the site and count occurrences of each word.
     public void getAllText() throws Exception {
-        ArrayList<String> textList = new ArrayList<String>();
+
 
         //Adds all text to an ArrayList
         for (WebElement e : allText) {
             textList.add(e.getText());
         }
 
+    }
+
+    //Turns all text on all pages into a dictionary file.
+    public void makeDictionary() throws Exception{
         //Outputs the ArrayList to a text file.
         Path out = Paths.get("raw.txt");
         Files.write(out, textList, Charset.defaultCharset());
 
         //Split the contents into a new ArrayList
         Scanner file = new Scanner(out);
-        ArrayList<String> words = new ArrayList<String>();
+
         while (file.hasNext()) {
             String next = file.next().toLowerCase();
             next = next.replaceAll("[^a-zA-Z]", "");
@@ -188,7 +196,6 @@ public class HomePage {
                 Collections.sort(words);
             }
         }
-
         //Outputs the ArrayList to a text file.
         Path sortedOut = Paths.get("sortedoutput.txt");
         Files.write(sortedOut, words, Charset.defaultCharset());
