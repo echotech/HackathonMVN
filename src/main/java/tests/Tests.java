@@ -62,7 +62,8 @@ public class Tests extends TestBase {
     @Test(priority=7)
     public void crawlImageTest() throws Exception {
         HomePage homePage = new HomePage(driver);
-        homePage.checkImages();
+        homePage.crawlLinks();
+        homePage.crawlImages();
     }
 
 

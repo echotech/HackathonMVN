@@ -145,7 +145,7 @@ public class HomePage {
                 //Creates URI from href tag
                 URI test = new URI(e.getAttribute("href"));
                 //Verifies the link is internal to skiutah.com
-                if (test.getHost().equals(ski.getHost())) {
+                if ((test.getHost().equals(ski.getHost()))&&!(test==null)) {
                     crawlQueue.add(test.toString());
                 }
             } catch (URISyntaxException url) {
@@ -161,6 +161,7 @@ public class HomePage {
                     alreadyVisited.add(link);
                     driver.get(link);
                     getAllText();
+                    addImages();
                 } catch (TimeoutException e) {
                     try {
                         crawlLinks();
@@ -226,24 +227,7 @@ public class HomePage {
     }
 
     //Challenge 8 Find broken images.
-    public void checkImages(){
-        for(WebElement e: allImages){
-            try {
-                //Create URI to compare links with
-                URI ski = new URI("http://www.skiutah.com");
-                //Creates URI from href tag
-                URI test = new URI(e.getAttribute("src"));
-                //Verifies the link is internal to skiutah.com
-                if (test.getHost().equals(ski.getHost())) {
-                    imgQueue.add(test.toString());
-                }
-            } catch (URISyntaxException url) {
-                System.out.println("Malformed url " + e.getAttribute("href"));
-            } catch (NullPointerException npe) {
-                npe.printStackTrace();
-            }
-
-        }
+    public void crawlImages(){
         for (String link : imgQueue) {
             if (!alreadyVisited.contains(link)) {
                 try {
@@ -252,13 +236,34 @@ public class HomePage {
 
                 } catch (TimeoutException e) {
                     try {
-                        checkImages();
+                        crawlImages();
                     } catch (NullPointerException npe) {
+                        System.out.println(link);
                         npe.printStackTrace();
                     }
                 }
             }
             //System.out.println("Visited " + alreadyVisited.size() + " links!");
+        }
+    }
+
+    public void addImages(){
+        for(WebElement e: allImages){
+            try {
+                //Create URI to compare links with
+                URI ski = new URI("http://www.skiutah.com");
+                //Creates URI from href tag
+                URI test = new URI(e.getAttribute("src"));
+                //Verifies the link is internal to skiutah.com
+                if (test.getHost().equals(ski.getHost())&&!(test==null)) {
+                    imgQueue.add(test.toString());
+                }
+            } catch (URISyntaxException url) {
+                System.out.println("Malformed url " + e.getAttribute("href"));
+            } catch (NullPointerException npe) {
+
+                npe.printStackTrace();
+            }
         }
     }
 
