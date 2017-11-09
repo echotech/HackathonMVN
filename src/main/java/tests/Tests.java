@@ -59,6 +59,11 @@ public class Tests extends TestBase {
         homePage.getAllText();
     }
 
+    @Test(priority=7)
+    public void crawlImageTest() throws Exception {
+        HomePage homePage = new HomePage(driver);
+        homePage.checkImages();
+    }
 
 
 }

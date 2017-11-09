@@ -28,9 +28,11 @@ public class HomePage {
     private WebDriver driver;
     //private List<String> crawlQueue = new LinkedList<String>();
     private LinkedBlockingQueue<String> crawlQueue = new LinkedBlockingQueue<String>();
+    private LinkedBlockingQueue<String> imgQueue = new LinkedBlockingQueue<String>();
     private List<String> alreadyVisited = new ArrayList<String>();
     private ArrayList<String> words = new ArrayList<String>();
     private ArrayList<String> textList = new ArrayList<String>();
+
 
 
     public HomePage(WebDriver driver) {
@@ -70,6 +72,9 @@ public class HomePage {
 
     @FindBy(xpath = "//body")
     List<WebElement> allText;
+
+    @FindBy(tagName= "img")
+    List<WebElement> allImages;
 
     //Challenge 1: Returns the title of the current page
     public String getTitle() {
@@ -145,9 +150,9 @@ public class HomePage {
                 }
             } catch (URISyntaxException url) {
                 System.out.println("Malformed url " + e.getAttribute("href"));
-                continue;
+                url.printStackTrace();
             } catch (NullPointerException npe) {
-                continue;
+                npe.printStackTrace();
             }
         }
         for (String link : crawlQueue) {
@@ -159,9 +164,8 @@ public class HomePage {
                 } catch (TimeoutException e) {
                     try {
                         crawlLinks();
-
                     } catch (NullPointerException npe) {
-                        continue;
+                        npe.printStackTrace();
                     }
                 }
             }
@@ -172,8 +176,6 @@ public class HomePage {
 
     //Challenge 7: Get all text on the site and count occurrences of each word.
     public void getAllText() throws Exception {
-
-
         //Adds all text to an ArrayList
         for (WebElement e : allText) {
             textList.add(e.getText());
@@ -221,6 +223,43 @@ public class HomePage {
 
         Path dictFile = Paths.get("dictionary.txt");
         Files.write(dictFile, countedList, Charset.defaultCharset());
+    }
+
+    //Challenge 8 Find broken images.
+    public void checkImages(){
+        for(WebElement e: allImages){
+            try {
+                //Create URI to compare links with
+                URI ski = new URI("http://www.skiutah.com");
+                //Creates URI from href tag
+                URI test = new URI(e.getAttribute("src"));
+                //Verifies the link is internal to skiutah.com
+                if (test.getHost().equals(ski.getHost())) {
+                    imgQueue.add(test.toString());
+                }
+            } catch (URISyntaxException url) {
+                System.out.println("Malformed url " + e.getAttribute("href"));
+            } catch (NullPointerException npe) {
+                npe.printStackTrace();
+            }
+
+        }
+        for (String link : imgQueue) {
+            if (!alreadyVisited.contains(link)) {
+                try {
+                    alreadyVisited.add(link);
+                    driver.get(link);
+
+                } catch (TimeoutException e) {
+                    try {
+                        checkImages();
+                    } catch (NullPointerException npe) {
+                        npe.printStackTrace();
+                    }
+                }
+            }
+            //System.out.println("Visited " + alreadyVisited.size() + " links!");
+        }
     }
 
 
