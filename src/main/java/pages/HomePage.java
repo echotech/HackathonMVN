@@ -34,7 +34,6 @@ public class HomePage {
     private ArrayList<String> textList = new ArrayList<String>();
 
 
-
     public HomePage(WebDriver driver) {
         PageFactory.initElements(driver, this);
         this.driver = driver;
@@ -73,7 +72,7 @@ public class HomePage {
     @FindBy(xpath = "//body")
     List<WebElement> allText;
 
-    @FindBy(tagName= "img")
+    @FindBy(tagName = "img")
     List<WebElement> allImages;
 
     //Challenge 1: Returns the title of the current page
@@ -137,23 +136,24 @@ public class HomePage {
     }
 
     //Challenge 6: Crawl a page and go to every link on the page with no duplicates.
-    public void crawlLinks() throws Exception{
+    public void crawlLinks() throws Exception {
         for (WebElement e : pageLinks) {
-            try {
-                //Create URI to compare links with
-                URI ski = new URI("http://www.skiutah.com");
-                //Creates URI from href tag
-                URI test = new URI(e.getAttribute("href"));
-                //Verifies the link is internal to skiutah.com
-                if ((test.getHost().equals(ski.getHost()))&&!(test==null)) {
-                    crawlQueue.add(test.toString());
+
+                try {
+                    //Create URI to compare links with
+                    URI ski = new URI("http://www.skiutah.com");
+                    //Creates URI from href tag
+                    URI test = new URI(e.getAttribute("href"));
+                    //Verifies the link is internal to skiutah.com
+                    if (!(test.getHost() == null) && (test.getHost().equals(ski.getHost()))) {
+                        crawlQueue.add(test.toString());
+                    }
+                } catch (URISyntaxException url) {
+                    System.out.println("Malformed url " + e.getAttribute("href"));
+                    url.printStackTrace();
+                } catch (NullPointerException npe) {
                 }
-            } catch (URISyntaxException url) {
-                System.out.println("Malformed url " + e.getAttribute("href"));
-                url.printStackTrace();
-            } catch (NullPointerException npe) {
-                npe.printStackTrace();
-            }
+
         }
         for (String link : crawlQueue) {
             if (!alreadyVisited.contains(link)) {
@@ -185,7 +185,7 @@ public class HomePage {
     }
 
     //Turns all text on all pages into a dictionary file.
-    public void makeDictionary() throws Exception{
+    public void makeDictionary() throws Exception {
         //Outputs the ArrayList to a text file.
         Path out = Paths.get("raw.txt");
         Files.write(out, textList, Charset.defaultCharset());
@@ -227,7 +227,7 @@ public class HomePage {
     }
 
     //Challenge 8 Find broken images.
-    public void crawlImages(){
+    public void crawlImages() {
         for (String link : imgQueue) {
             if (!alreadyVisited.contains(link)) {
                 try {
@@ -247,25 +247,27 @@ public class HomePage {
         }
     }
 
-    public void addImages(){
-        for(WebElement e: allImages){
-            try {
-                //Create URI to compare links with
-                URI ski = new URI("http://www.skiutah.com");
-                //Creates URI from href tag
-                URI test = new URI(e.getAttribute("src"));
-                //Verifies the link is internal to skiutah.com
-                if (test.getHost().equals(ski.getHost())&&!(test==null)) {
-                    imgQueue.add(test.toString());
+    public void addImages() {
+        for (WebElement e : allImages) {
+
+                try {
+                    //Create URI to compare links with
+                    URI ski = new URI("http://www.skiutah.com");
+                    //Creates URI from href tag
+                    URI test = new URI(e.getAttribute("href"));
+                    //Verifies the link is internal to skiutah.com
+                    if (!(test.getHost() == null) && (test.getHost().equals(ski.getHost()))) {
+                        imgQueue.add(test.toString());
+                    }
+                } catch (URISyntaxException url) {
+                    System.out.println("Malformed url " + e.getAttribute("href"));
+                    url.printStackTrace();
+                } catch (NullPointerException npe) {
+
                 }
-            } catch (URISyntaxException url) {
-                System.out.println("Malformed url " + e.getAttribute("href"));
-            } catch (NullPointerException npe) {
 
-                npe.printStackTrace();
-            }
         }
+
+
     }
-
-
 }
