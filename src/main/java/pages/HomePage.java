@@ -7,7 +7,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.*;
@@ -32,6 +35,7 @@ public class HomePage {
     private List<String> alreadyVisited = new ArrayList<String>();
     private ArrayList<String> words = new ArrayList<String>();
     private ArrayList<String> textList = new ArrayList<String>();
+    private ArrayList<String> brokenImages = new ArrayList<String>();
 
 
     public HomePage(WebDriver driver) {
@@ -227,12 +231,16 @@ public class HomePage {
     }
 
     //Challenge 8 Find broken images.
-    public void crawlImages() {
+    public void crawlImages() throws Exception{
         for (String link : imgQueue) {
             if (!alreadyVisited.contains(link)) {
                 try {
                     alreadyVisited.add(link);
                     driver.get(link);
+
+                    for(WebElement a: allImages){
+                        verifyImageActive(a);
+                    }
 
                 } catch (TimeoutException e) {
                     try {
@@ -244,6 +252,22 @@ public class HomePage {
                 }
             }
             //System.out.println("Visited " + alreadyVisited.size() + " links!");
+        }
+        Path imgFile = Paths.get("broken-images.txt");
+        Files.write(imgFile, brokenImages, Charset.defaultCharset());
+    }
+
+    public void verifyImageActive(WebElement imgElement) {
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpGet request = new HttpGet(imgElement.getAttribute("src"));
+            HttpResponse response = client.execute(request);
+            // verifying response code he HttpStatus should be 200 if not,
+
+            if (response.getStatusLine().getStatusCode() != 200)
+                brokenImages.add(imgElement.getAttribute("src"));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
